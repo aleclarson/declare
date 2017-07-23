@@ -4,6 +4,9 @@ const assertType = require('assertType')
 const Either = require('Either')
 const isType = require('isType')
 
+const keys = Object.keys
+const define = Object.defineProperty
+const setProto = Object.setPrototypeOf
 const forEach = [].forEach
 
 function declare(getConstructor) {
@@ -22,12 +25,12 @@ function declare(getConstructor) {
       if (!isType(values, Object)) {
         return
       }
-      Object.keys(values).forEach(key => {
+      keys(values).forEach(key => {
         if (values[key] === undefined) {
           return
         }
         if (key[0] === '_') {
-          Object.defineProperty(inst, key, {
+          define(inst, key, {
             value: values[key]
           })
         } else {
@@ -64,17 +67,30 @@ class Declaration {
     assertType(methods, Object)
     this._methods.push(methods)
   }
+  statics(values) {
+    assertType(values, Object)
+    const ctr = this._ctr
+    keys(values).forEach(key => {
+      if (key[0] === '_') {
+        define(ctr, key, {
+          value: values[key]
+        })
+      } else {
+        ctr[key] = values[key]
+      }
+    })
+  }
   build() {
     const ctr = this._ctr
     this._methods.forEach(methods => {
-      Object.keys(methods).forEach(key => {
-        Object.defineProperty(ctr.prototype, key, {
+      keys(methods).forEach(key => {
+        define(ctr.prototype, key, {
           value: methods[key]
         })
       })
     })
     if (this._kind) {
-      Object.setPrototypeOf(ctr.prototype, this._kind.prototype)
+      setProto(ctr.prototype, this._kind.prototype)
     }
     return ctr
   }
@@ -100,7 +116,7 @@ const helpers = {
     assertType(types, Object)
     return (options) => {
       if (isType(options, Object)) {
-        Object.keys(types).forEach(key => {
+        keys(types).forEach(key => {
           assertType(options[key], types[key], key)
         })
       }

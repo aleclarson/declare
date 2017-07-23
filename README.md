@@ -1,5 +1,5 @@
 
-# declare v0.0.1 
+# declare v0.0.2 
 
 ```js
 const declare = require('declare');
@@ -48,7 +48,15 @@ type.extend({
   }
 })
 
+// Define properties on the constructor.
+type.statics({
+  ReadableState: {}
+})
+
 // Build the constructor.
-module.exports = type.build()
+const ReadableStream = type.build()
+
+// Use the constructor.
+const stream = new ReadableStream('./file.txt')
 ```
 

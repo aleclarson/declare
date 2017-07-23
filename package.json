@@ -1,6 +1,6 @@
 {
   "name": "declare",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "Either": "aleclarson/Either#1.0.2",
     "assertType": "aleclarson/assertType#2.0.2",
